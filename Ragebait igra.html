@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Most Annoying Game Ever</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            color: #00ff00; /* Контрастно зелено за текста */
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            overflow: hidden;
+            user-select: none;
+            /* КОРИГИРАНО: Много по-плавна смяна на цветовете (0.8 секунди вместо 0.05) */
+            animation: flashingBg 0.8s infinite linear; 
+        }
+
+        /* По-бавна и приятна смяна на различните ярки цветове */
+        @keyframes flashingBg {
+            0% { background-color: #ff00ff; }   /* Розово */
+            20% { background-color: #00ffff; }  /* Синьо */
+            40% { background-color: #ffff00; }  /* Жълто */
+            60% { background-color: #ff0000; }  /* Червено */
+            80% { background-color: #00ff00; }  /* Зелено */
+            100% { background-color: #ff00ff; }
+        }
+
+        h1, #scoreBoard, #rageButton {
+            transition: transform 0.3s ease;
+        }
+        
+        .flipped-element {
+            transform: rotate(180deg) !important;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-shadow: 3px 3px #000000;
+            animation: blink 0.5s infinite; /* Намалена скорост и на заглавието */
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .container {
+            margin-top: 100px;
+            position: relative;
+            height: 500px;
+        }
+
+        #rageButton {
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            background-color: #ff0000;
+            color: white;
+            border: 5px solid black;
+            cursor: pointer;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transition: left 0.08s ease, top 0.08s ease;
+            z-index: 500;
+        }
+
+        #scoreBoard {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #ffff00;
+            text-shadow: 2px 2px #000;
+        }
+
+        #loading {
+            display: none;
+            font-size: 1.8rem;
+            color: white;
+            background: black;
+            padding: 20px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 10px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="mainTitle">КЛИКНИ БУТОНА ЗА ДА СПЕЧЕЛИШ $1,000,000!</h1>
+    <div id="scoreBoard">Твоят резултат: <span id="score">0</span> / 10</div>
+
+    <div class="container">
+        <button id="rageButton">КЛИКНИ МЕ!</button>
+    </div>
+
+    <div id="loading">Записване на резултата... Моля, изчакайте (Не затваряйте браузъра)...</div>
+
+    <script>
+        const button = document.getElementById('rageButton');
+        const scoreDisplay = document.getElementById('score');
+        const loading = document.getElementById('loading');
+        const mainTitle = document.getElementById('mainTitle');
+        const scoreBoard = document.getElementById('scoreBoard');
+        let score = 0;
+
+        button.addEventListener('mouseover', () => {
+            if (score >= 2 && score < 8) {
+                if (Math.random() > 0.2) {
+                    moveButton();
+                }
+            }
+        });
+
+        button.addEventListener('click', () => {
+            score++;
+            
+            if (score === 3) {
+                if (Math.random() <= 0.15) {
+                    button.textContent = "ХВАНА МЕ, АМА НЕ!";
+                    alert("Грешка 404: Невалиден клик! Прогресът е нулиран.");
+                    score = 0;
+                } else {
+                    button.textContent = "УСПЕШЕН КЛИК!";
+                }
+            } 
+            else if (score === 6) {
+                mainTitle.classList.add('flipped-element');
+                scoreBoard.classList.add('flipped-element');
+                button.classList.add('flipped-element');
+                button.textContent = "??ЕМ ИНКЛИК";
+            } 
+            else if (score === 8) {
+                mainTitle.classList.remove('flipped-element');
+                scoreBoard.classList.remove('flipped-element');
+                button.classList.remove('flipped-element');
+                button.textContent = "ПОЧТИ СИ ТАМ!";
+            } 
+            else if (score === 9) {
+                button.style.display = 'none';
+                loading.style.display = 'block';
+                
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                    button.style.display = 'block';
+                    score = 0;
+                    button.textContent = "ОПС, СРИВ В СИСТЕМАТА! НАЧАЛО!";
+                    alert("Критична грешка! Базата данни се срина. Започнете отначало.");
+                }, 4000);
+            }
+            else if (score === 10) {
+                button.textContent = "ПОБЕДА! ТИ СПЕЧЕЛИ!";
+                button.style.background = "#00ff00";
+                button.style.color = "#000000";
+                button.style.position = "static";
+                button.style.transform = "none";
+                button.style.margin = "20px auto";
+
+                // Спираме мигането изцяло при победа
+                document.body.style.animation = "none";
+                document.body.style.backgroundColor = "black";
+
+                const finalBtn = document.createElement('button');
+                finalBtn.innerHTML = "ПРИБЕРИ СИ МИЛИОНА И ЗАТВОРИ ИГРАТА";
+                finalBtn.style.cssText = "display:block; margin:40px auto; padding:25px 50px; font-size:24px; background:red; color:white; border:5px solid white; cursor:pointer; font-weight:bold; box-shadow: 0 0 20px red;";
+                
+                finalBtn.addEventListener('click', () => {
+                    alert("Сигурни ли сте, че искате да излезете без да платите данък върху печалбата?");
+                    alert("Внимание: Намерен е троянски кон... шегувам се.");
+                    alert("Последно подканване: Сигурни ли сте?");
+                    alert("Ама наистина ли?");
+                    alert("Добре, затварям... след 3... 2... 1...");
+                    
+                    document.body.innerHTML = "<h1 style='color:red; font-size:4rem; margin-top:20%; animation:none;'>СИСТЕМАТА СЕ ИЗКЛЮЧВА...</h1>";
+                    
+                    setTimeout(() => { 
+                        window.close(); 
+                        document.body.innerHTML = "";
+                    }, 1500);
+                });
+                
+                document.body.appendChild(finalBtn);
+            }
+
+            scoreDisplay.textContent = score;
+            
+            if (score > 0 && score !== 9 && score !== 10) {
+                moveButton();
+            }
+        });
+
+        function moveButton() {
+            const viewWidth = window.innerWidth;
+            const viewHeight = window.innerHeight;
+            const btnWidth = button.offsetWidth;
+            const btnHeight = button.offsetHeight;
+
+            const minX = 30;
+            const minY = 180;
+            
+            const maxX = viewWidth - btnWidth - 30;
+            const maxY = viewHeight - btnHeight - 30;
+
+            let randomX = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
+            let randomY = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
+
+            randomX = Math.max(minX, Math.min(randomX, maxX));
+            randomY = Math.max(minY, Math.min(randomY, maxY));
+
+            button.style.position = 'fixed';
+            button.style.left = randomX + 'px';
+            button.style.top = randomY + 'px';
+            button.style.margin = '0';
+        }
+    </script>
+</body>
+</html>
